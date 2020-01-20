@@ -167,6 +167,7 @@ pub fn get_stats_counter(context: Data<Context>) -> ActixFuture!() {
                             ))
                         })?;
                     let stats = &context.stats_counter;
+                    let nodes_count = &context.p2p.nodes_count();
                     Ok(Some(json!({
                         "txRecvCnt": stats.tx_recv_cnt(),
                         "blockRecvCnt": stats.block_recv_cnt(),
@@ -180,6 +181,9 @@ pub fn get_stats_counter(context: Data<Context>) -> ActixFuture!() {
                         "lastBlockContentSize": tip_header.block_content_size(),
                         "lastBlockSum": block_input_sum.0,
                         "lastBlockFees": block_fee_sum.0,
+                        "peerAvailableCnt": nodes_count.all_available_nodes_count(),
+                        "peerUnreachableCnt": nodes_count.all_unreachable_nodes_count(),
+                        "peerQuarantinedCnt": nodes_count.all_quarantined_nodes_count(),
                     })))
                 });
             A(stats_json_fut)
