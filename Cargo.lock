@@ -1750,7 +1750,7 @@ dependencies = [
  "network-core 0.1.0-dev",
  "network-grpc 0.1.0",
  "nix 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "poldercast 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "poldercast 0.11.0 (git+https://github.com/michaeljfazio/poldercast.git?branch=fix-node-leak)",
  "rand 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustls 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2467,6 +2467,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "platforms"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "poldercast"
+version = "0.11.0"
+source = "git+https://github.com/michaeljfazio/poldercast.git?branch=fix-node-leak#52c449d7a246511e92495c7c03ded69964dd8e6c"
+dependencies = [
+ "hex 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "multiaddr 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)",
+ "thiserror 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "poldercast"
@@ -4659,6 +4671,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum pin-utils 0.1.0-alpha.4 (registry+https://github.com/rust-lang/crates.io-index)" = "5894c618ce612a3fa23881b152b608bafb8c56cfc22f434a3ba3120b40f7b587"
 "checksum pkg-config 0.3.17 (registry+https://github.com/rust-lang/crates.io-index)" = "05da548ad6865900e60eaba7f589cc0783590a92e940c26953ff81ddbab2d677"
 "checksum platforms 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "feb3b2b1033b8a60b4da6ee470325f887758c95d5320f52f9ce0df055a55940e"
+"checksum poldercast 0.11.0 (git+https://github.com/michaeljfazio/poldercast.git?branch=fix-node-leak)" = "<none>"
 "checksum poldercast 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ca6a852c0810f500bb90c32ae4c525b4165f8869291cd0443c9c205ef6ca05a3"
 "checksum ppv-lite86 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "74490b50b9fbe561ac330df47c08f3f33073d2d00c150f719147d7c54522fa1b"
 "checksum predicates 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "a9bfe52247e5cc9b2f943682a85a5549fb9662245caf094504e69a2f03fe64d4"
