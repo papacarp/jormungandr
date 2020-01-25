@@ -343,13 +343,41 @@ async fn bootstrap(initialized_node: InitializedNode) -> Result<BootstrappedNode
 
     let (blockchain, blockchain_tip) = start_up::load_blockchain(block0, storage, block_cache_ttl)?;
 
-    let bootstrapped = network::bootstrap(
-        &settings.network,
-        blockchain.clone(),
-        blockchain_tip.clone(),
-        &bootstrap_logger,
-    )
-    .await?;
+    // Bootstrap do-while loop.
+    //
+    // Possible outcomes:
+    //  1) Fail to bootstrap with any peers in the trusted peer list and the node IS NOT configured
+    //     as a "genesis node". The loop will continue until successful bootsrap with a node.
+    //  2) Fail to bootstrap with any peers in the trusted peer list and the node IS configured
+    //     as a "genesis node". The loop will complete and the node will continue on running, thus
+    //     allowing it to establish itself as the first node (genesis node) in a network.
+    //  3) Successfully bootstrap from a trusted peer. Immediately drop out of the while loop and
+    //     continue as normal node.
+    while {
+        if network::bootstrap(
+            &settings.network,
+            blockchain.clone(),
+            blockchain_tip.clone(),
+            &bootstrap_logger,
+        )
+        .await?
+        {
+            info!(&bootstrap_logger, "node successfully bootstrapped!");
+            false // drop out of the loop, we're done here
+        } else if settings.genesis_node {
+            info!(
+                &bootstrap_logger,
+                "failed to bootstrap from trusted peers, continuing as genesis node...",
+            );
+            false // drop out of the loop, we're done here
+        } else {
+            info!(
+                &bootstrap_logger,
+                "failed to bootstrap from all trusted peers, trying again..."
+            );
+            true // around we go again!
+        }
+    } {} // do-while (not a mistake)
 
     let explorer_db = if settings.explorer {
         Some(explorer::ExplorerDB::bootstrap(
@@ -359,13 +387,6 @@ async fn bootstrap(initialized_node: InitializedNode) -> Result<BootstrappedNode
     } else {
         None
     };
-
-    if !bootstrapped {
-        // TODO, the node didn't manage to connect to any other nodes
-        // for the initial bootstrap, that may be an error however
-        // it is not necessarily an error, especially in the case the node is
-        // the first ever to wake
-    }
 
     Ok(BootstrappedNode {
         settings,

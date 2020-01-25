@@ -34,6 +34,13 @@ pub struct Config {
     /// the time interval with no blockchain updates after which alerts are thrown
     #[serde(default)]
     pub no_blockchain_updates_warning_interval: Option<Duration>,
+
+    /// true if this node is the first node in an entire network (i.e. 'genesis node'). The genesis
+    /// node establishes the first genesis block. Non-genesis nodes will attempt to bootstrap from
+    /// trusted peers indefinitely, whereas a genesis node will only attempt to bootstrap from trusted
+    /// peers once. If no peers can be bootstrapped, then the node assumes it is the first in the network
+    /// and continues.
+    pub genesis_node: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

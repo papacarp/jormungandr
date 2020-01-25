@@ -44,6 +44,7 @@ pub struct Settings {
     pub leadership: Leadership,
     pub explorer: bool,
     pub no_blockchain_updates_warning_interval: std::time::Duration,
+    pub genesis_node: bool,
 }
 
 pub struct RawSettings {
@@ -190,6 +191,9 @@ impl RawSettings {
                 .unwrap_or(std::time::Duration::from_secs(
                     DEFAULT_NO_BLOCKCHAIN_UPDATES_WARNING_INTERVAL,
                 )),
+            genesis_node: config.as_ref().map_or(false, |cfg| {
+                cfg.genesis_node.clone().map_or(false, |cfg| cfg)
+            }),
         })
     }
 }
