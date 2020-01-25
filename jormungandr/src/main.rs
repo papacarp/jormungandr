@@ -375,6 +375,8 @@ async fn bootstrap(initialized_node: InitializedNode) -> Result<BootstrappedNode
                 &bootstrap_logger,
                 "failed to bootstrap from all trusted peers, trying again..."
             );
+            // small delay before trying again (prevent thrashing if network interface is unavailable)
+            std::thread::sleep(Duration::from_secs(1));
             true // around we go again!
         }
     } {} // do-while (not a mistake)
