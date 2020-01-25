@@ -58,6 +58,7 @@ pub struct NodeConfig {
     pub p2p: Peer2Peer,
     pub mempool: Mempool,
     pub explorer: Explorer,
+    pub genesis_node: Option<bool>,
 }
 
 const DEFAULT_HOST: &str = "127.0.0.1";
@@ -102,6 +103,7 @@ impl NodeConfig {
             },
             mempool: Mempool::default(),
             explorer: Explorer { enabled: false },
+            genesis_node: Some(true),
         }
     }
 
