@@ -114,15 +114,6 @@ pub struct P2pConfig {
     #[serde(default)]
     pub policy: PolicyConfig,
 
-    /// set the maximum number of unreachable nodes to contact at a time for every
-    /// new notification. The default value is 20.
-    ///
-    /// Every time a new propagation event is triggered, the node will select
-    /// randomly a certain amount of unreachable nodes to connect to in addition
-    /// to the one selected by other p2p topology layer.
-    #[serde(default)]
-    pub max_unreachable_nodes_to_connect_per_event: Option<usize>,
-
     /// interval to start gossiping with new nodes, changing the value will
     /// affect the bandwidth. The more often the node will gossip the more
     /// bandwidth the node will need. The less often the node gossips the less
@@ -198,7 +189,6 @@ impl Default for P2pConfig {
             max_connections: None,
             allow_private_addresses: false,
             policy: PolicyConfig::default(),
-            max_unreachable_nodes_to_connect_per_event: None,
             gossip_interval: None,
             topology_force_reset_interval: None,
         }
