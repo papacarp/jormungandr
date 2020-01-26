@@ -1,5 +1,5 @@
 use crate::common::{
-    configuration::node_config_model::{Log, LogEntry, TrustedPeer},
+    configuration::node_config_model::{Log, LogEntry},
     jormungandr::{ConfigurationBuilder, Starter},
 };
 

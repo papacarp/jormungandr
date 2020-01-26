@@ -292,7 +292,7 @@ impl Process {
                             reply.reply_error(chain_header_error_into_reply(e));
                             Either::A(future::ok(()))
                         }
-                        Ok((hashes, maybe_remainder)) => {
+                        Ok((hashes, _)) => {
                             if hashes.is_empty() {
                                 Either::A(future::ok(()))
                             } else {

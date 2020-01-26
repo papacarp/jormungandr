@@ -49,8 +49,6 @@ pub fn bootstrap_from_peer(
 
     let runtime = Runtime::new().map_err(|e| Error::RuntimeInit { source: e })?;
 
-    let blockchain2 = blockchain.clone();
-    let logger2 = logger.clone();
     let bootstrap = grpc::connect(peer.address(), None, runtime.executor())
         .map_err(|e| Error::Connect { source: e })
         .and_then(|client: Connection<BlockConfig>| {
