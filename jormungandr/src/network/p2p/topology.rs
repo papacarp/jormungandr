@@ -7,7 +7,6 @@ use crate::{
     settings::start::network::Configuration,
 };
 use poldercast::{
-    custom_layers,
     poldercast::{Cyclon, Rings, Vicinity},
     Layer, NodeProfile, PolicyReport, StrikeReason, Topology,
 };
@@ -88,15 +87,6 @@ impl P2pTopology {
         topology.add_layer(Rings::default());
         topology.add_layer(Vicinity::default());
         topology.add_layer(Cyclon::default());
-    }
-
-    pub fn set_custom_modules(&mut self, config: &Configuration) {
-        let mut topology = self.lock.write().unwrap();
-        if let Some(size) = config.max_unreachable_nodes_to_connect_per_event {
-            topology.add_layer(custom_layers::RandomDirectConnections::with_max_view_length(size))
-        } else {
-            topology.add_layer(custom_layers::RandomDirectConnections::default());
-        }
     }
 
     /// Returns a list of neighbors selected in this turn

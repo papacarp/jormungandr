@@ -137,7 +137,6 @@ impl GlobalState {
     ) -> Self {
         let mut topology = topology;
         topology.set_poldercast_modules();
-        topology.set_custom_modules(&config);
         topology.set_policy(config.policy.clone());
 
         // inject the trusted peers as initial gossips, this will make the node
