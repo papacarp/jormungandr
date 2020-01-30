@@ -5,6 +5,7 @@ use slog::Logger;
 
 /// default quarantine duration is 30min
 const DEFAULT_QUARANTINE_DURATION: std::time::Duration = std::time::Duration::from_secs(1800);
+const DEFAULT_ALIVE_DURATION: std::time::Duration = std::time::Duration::from_secs(300);
 
 /// This is the P2P policy. Right now it is very similar to the default policy
 /// defined in `poldercast` crate.
@@ -12,7 +13,7 @@ const DEFAULT_QUARANTINE_DURATION: std::time::Duration = std::time::Duration::fr
 #[derive(Debug, Clone)]
 pub struct Policy {
     quarantine_duration: std::time::Duration,
-
+    alive_duration: std::time::Duration,
     logger: Logger,
 }
 
@@ -20,12 +21,14 @@ pub struct Policy {
 #[serde(deny_unknown_fields, rename_all = "snake_case")]
 pub struct PolicyConfig {
     quarantine_duration: Duration,
+    alive_duration: Duration,
 }
 
 impl Policy {
     pub fn new(pc: PolicyConfig, logger: Logger) -> Self {
         Self {
             quarantine_duration: pc.quarantine_duration.into(),
+            alive_duration: pc.alive_duration.into(),
             logger,
         }
     }
@@ -35,6 +38,7 @@ impl Default for PolicyConfig {
     fn default() -> Self {
         Self {
             quarantine_duration: Duration::from(DEFAULT_QUARANTINE_DURATION),
+            alive_duration: Duration::from(DEFAULT_ALIVE_DURATION),
         }
     }
 }
@@ -44,36 +48,23 @@ impl poldercast::Policy for Policy {
         let id = node.id().to_string();
         let logger = self.logger.new(o!("id" => id));
 
-        // if the node is already quarantined
-        if let Some(since) = node.logs().quarantined() {
-            let duration = since.elapsed().unwrap();
+        let since_updated = node.logs().last_update().elapsed().unwrap();
+        let since_quarantined = node.logs().quarantined().map(|q| q.elapsed().unwrap());
 
-            if duration < self.quarantine_duration {
-                // the node still need to do some quarantine time
-                PolicyReport::None
-            } else if node.logs().last_update().elapsed().unwrap() < self.quarantine_duration {
-                // the node has been quarantined long enough, check if it has been updated
-                // while being quarantined (i.e. the node is still up and advertising itself
-                // or others are still gossiping about it.)
-
-                // the fact that this `Policy` does clean the records is a policy choice.
-                // one could prefer to keep the record longers for future `check`.
-                node.record_mut().clean_slate();
-                debug!(logger, "lifting quarantine");
-                PolicyReport::LiftQuarantine
-            } else {
-                // it appears the node was quarantine and is no longer active or gossiped
-                // about, so we can forget it
-                debug!(logger, "forgetting about the node");
-                PolicyReport::Forget
-            }
-        } else if node.record().is_clear() {
-            // if the record is clear, do nothing, leave the Node in the available nodes
-            PolicyReport::None
-        } else {
-            // if the record is not `clear` then we quarantine the block for some time
-            debug!(logger, "move node to quarantine");
+        if since_updated >= self.alive_duration {
+            debug!(logger, "forgetting about the node (stale)");
+            PolicyReport::Forget
+        } else if since_quarantined.is_none() && !node.record().is_clear() {
+            debug!(logger, "moving node to quarantine");
             PolicyReport::Quarantine
+        } else if since_quarantined.is_some()
+            && since_quarantined.unwrap() >= self.quarantine_duration
+        {
+            node.record_mut().clean_slate(); // clean the node record first
+            debug!(logger, "lifting quarantine");
+            PolicyReport::LiftQuarantine
+        } else {
+            PolicyReport::None
         }
     }
 }
