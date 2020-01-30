@@ -48,21 +48,20 @@ impl poldercast::Policy for Policy {
         let id = node.id().to_string();
         let logger = self.logger.new(o!("id" => id));
 
-        let since_updated = node.logs().last_update().elapsed().unwrap();
-        let since_quarantined = node.logs().quarantined().map(|q| q.elapsed().unwrap());
-
-        if since_updated >= self.alive_duration {
+        if node.logs().last_update().elapsed().unwrap() >= self.alive_duration {
             debug!(logger, "forgetting about the node (stale)");
             PolicyReport::Forget
-        } else if since_quarantined.is_none() && !node.record().is_clear() {
+        } else if node.logs().quarantined().is_none() && !node.record().is_clear() {
             debug!(logger, "moving node to quarantine");
             PolicyReport::Quarantine
-        } else if since_quarantined.is_some()
-            && since_quarantined.unwrap() >= self.quarantine_duration
-        {
-            node.record_mut().clean_slate(); // clean the node record first
-            debug!(logger, "lifting quarantine");
-            PolicyReport::LiftQuarantine
+        } else if let Some(q) = node.logs().quarantined() {
+            if q.elapsed().unwrap() >= self.quarantine_duration {
+                node.record_mut().clean_slate(); // clean the node record first
+                debug!(logger, "lifting quarantine");
+                PolicyReport::LiftQuarantine
+            } else {
+                PolicyReport::None
+            }
         } else {
             PolicyReport::None
         }
