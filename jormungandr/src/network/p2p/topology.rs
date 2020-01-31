@@ -4,7 +4,6 @@
 use crate::{
     log::KEY_SUB_TASK,
     network::p2p::{Gossips, Id, Node, Policy, PolicyConfig},
-    settings::start::network::Configuration,
 };
 use poldercast::{
     poldercast::{Cyclon, Rings, Vicinity},
