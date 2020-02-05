@@ -170,8 +170,8 @@ impl P2pTopology {
         self.read().map(|topology| {
             topology
                 .nodes()
-                .all_available_nodes()
-                .into_iter()
+                .available_nodes()
+                .values()
                 .cloned()
                 .collect()
         })
