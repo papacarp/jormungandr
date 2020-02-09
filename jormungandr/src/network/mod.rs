@@ -7,6 +7,7 @@
 
 pub mod bootstrap;
 mod client;
+mod gossip;
 mod grpc;
 mod inbound;
 pub mod p2p;
