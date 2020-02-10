@@ -5,6 +5,7 @@ use rand::seq::IteratorRandom;
 use std::borrow::Borrow;
 use std::collections::hash_map::RandomState;
 use std::collections::{HashMap, HashSet};
+use std::iter::FromIterator;
 
 // Default number of neighbours to collect per topic (either side or origin profile).
 const DEFAULT_RING_NEIGHBOURS: usize = 2;
@@ -13,6 +14,7 @@ const DEFAULT_GOSSIP_SIZE: usize = 10;
 
 struct Rings {
     view_size: usize,
+    gossip_size: usize,
     view: ProfileSet,
 }
 
@@ -59,5 +61,28 @@ impl Layer for Rings {
         self.view = neighbours;
     }
 
-    fn collect_gossips(self, identity: &mut Profile, target: &Profile, gossips: &mut ProfileSet) {}
+    fn collect_gossips(self, identity: &mut Profile, target: &Profile, gossips: &mut ProfileSet) {
+        let mut neighbours = ProfileSet::from_iter(
+            self.view
+                .into_iter()
+                .filter(|profile| {
+                    profile
+                        .subscriptions
+                        .keys()
+                        .any(|topic| target.subscriptions.contains_key(topic))
+                })
+                .take(self.gossip_size),
+        );
+
+        let random: HashSet<Profile> = gossips
+            .difference(&neighbours)
+            .choose_multiple(&mut rand::thread_rng(), self.gossip_size - neighbours.len())
+            .into_iter()
+            .cloned()
+            .collect();
+
+        for profile in neighbours.union(&random) {
+            gossips.insert(profile.clone());
+        }
+    }
 }

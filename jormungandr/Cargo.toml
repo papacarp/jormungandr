@@ -27,6 +27,7 @@ chain-storage-sqlite-old = { path = "../chain-deps/chain-storage-sqlite-old" }
 chain-time      = { path = "../chain-deps/chain-time" }
 chain-addr = { path = "../chain-deps/chain-addr" }
 cardano-legacy-address = { path = "../chain-deps/cardano-legacy-address" }
+itertools = "0.8.2"
 imhamt = { path = "../chain-deps/imhamt" }
 error-chain = "0.12"
 futures    = "0.1"

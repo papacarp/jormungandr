@@ -1898,6 +1898,7 @@ dependencies = [
  "humantime",
  "hyper",
  "imhamt",
+ "itertools 0.8.2",
  "jormungandr-lib",
  "juniper",
  "lazy_static",

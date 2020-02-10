@@ -1,8 +1,9 @@
-// TODO: named this module "gossip" not "poldercast" so as not to conflict with the external library
+// This module implements the [PolderCast](https://hal.inria.fr/hal-01555561/document) P2P Topic
+// Based Pub/Sub protocol.
 
-mod cyclon;
-mod layer;
-mod profile;
-mod rings;
-mod topology;
-mod vicinity;
+//mod cyclon;
+//mod layer;
+//mod profile;
+//mod rings;
+//mod topology;
+//mod vicinity;
