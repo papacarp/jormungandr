@@ -1907,7 +1907,7 @@ dependencies = [
  "network-core",
  "network-grpc",
  "nix 0.15.0",
- "poldercast 0.11.2 (git+https://github.com/michaeljfazio/poldercast.git?rev=28f3aff)",
+ "poldercast 0.11.3",
  "rand 0.7.3",
  "rustls",
  "serde",
@@ -1956,7 +1956,7 @@ dependencies = [
  "jormungandr-lib",
  "lazy_static",
  "mktemp",
- "poldercast 0.11.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "poldercast 0.11.2",
  "protobuf",
  "protoc-rust",
  "quickcheck",
@@ -1990,7 +1990,7 @@ dependencies = [
  "chrono",
  "ed25519-bip32",
  "humantime",
- "poldercast 0.11.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "poldercast 0.11.2",
  "quickcheck",
  "rand 0.7.3",
  "rand_chacha 0.2.1",
@@ -2020,7 +2020,7 @@ dependencies = [
  "jormungandr-lib",
  "lazy_static",
  "mktemp",
- "poldercast 0.11.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "poldercast 0.11.2",
  "rand 0.7.3",
  "rand_chacha 0.2.1",
  "rand_core 0.5.1",
@@ -2692,7 +2692,8 @@ checksum = "feb3b2b1033b8a60b4da6ee470325f887758c95d5320f52f9ce0df055a55940e"
 [[package]]
 name = "poldercast"
 version = "0.11.2"
-source = "git+https://github.com/michaeljfazio/poldercast.git?rev=28f3aff#28f3aff52d1dca94c9f8b463c94ae56205a5b889"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ccbde3ab0530e5323e8c985c945233558f8e8c2fc4186a255a2ba6d87ad662dd"
 dependencies = [
  "hex 0.4.0",
  "multiaddr",
@@ -2704,9 +2705,8 @@ dependencies = [
 
 [[package]]
 name = "poldercast"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ccbde3ab0530e5323e8c985c945233558f8e8c2fc4186a255a2ba6d87ad662dd"
+version = "0.11.3"
+source = "git+https://github.com/michaeljfazio/poldercast.git?rev=4d8572a#4d8572acbbf7a72c479f5e0accaa9d512c0e0c14"
 dependencies = [
  "hex 0.4.0",
  "multiaddr",
