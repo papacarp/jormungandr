@@ -1,5 +1,4 @@
 use crate::network::gossip::profile::{Profile, ProfileSet};
-use std::collections::HashSet;
 
 pub trait Layer {
     fn accept_gossips(

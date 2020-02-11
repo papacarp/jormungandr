@@ -1,4 +1,3 @@
-use std::collections::hash_map::RandomState;
 use std::collections::{HashMap, HashSet};
 use std::hash::{Hash, Hasher};
 use std::net::IpAddr;
@@ -40,6 +39,24 @@ impl Profile {
             }
         }
         score
+    }
+
+    pub fn topics(&self) -> HashSet<Topic> {
+        self.subscriptions.keys().into_iter().cloned().collect()
+    }
+
+    pub fn shares_topics_with(&self, other: &Self) -> bool {
+        self.subscriptions
+            .keys()
+            .any(|topic| other.subscriptions.contains_key(topic))
+    }
+
+    pub fn shared_topics(&self, other: &Self) -> HashSet<Topic> {
+        self.topics()
+            .union(&other.topics())
+            .into_iter()
+            .cloned()
+            .collect()
     }
 }
 

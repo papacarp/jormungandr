@@ -2,8 +2,8 @@
 // Based Pub/Sub protocol.
 
 //mod cyclon;
-//mod layer;
-//mod profile;
+mod layer;
+mod profile;
 //mod rings;
 //mod topology;
-//mod vicinity;
+mod vicinity;

@@ -1,7 +1,7 @@
 use crate::network::gossip::layer::Layer;
 use crate::network::gossip::profile::{Priority, Profile, ProfileSet, Topic};
 use itertools::Itertools;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 const DEFAULT_VIEW_SIZE: usize = 20;
 const DEFAULT_GOSSIP_SIZE: usize = 10;
@@ -38,19 +38,12 @@ impl Layer for Vicinity {
     ) {
         let topic_map: HashMap<Topic, Vec<&Profile>> = input
             .into_iter()
-            // 1) Filter for profiles that we share at least one common subscription with.
-            .filter(|profile| {
-                profile
-                    .subscriptions
-                    .keys()
-                    .any(|topic| identity.subscriptions.contains_key(topic))
-            })
-            // 2) Sort using proximity function relative to the IDENTITY.
+            // 1) Sort using proximity function relative to the IDENTITY.
             .sorted_by(|left, right| {
                 left.proximity_to(identity)
                     .cmp(&right.proximity_to(identity))
             })
-            // 3) Expand to an iterator of (Topic, &Profile) tuples.
+            // 2) Expand to an iterator of (Topic, &Profile) tuples.
             .map(|profile| {
                 profile
                     .subscriptions
@@ -58,20 +51,24 @@ impl Layer for Vicinity {
                     .into_iter()
                     .map(move |topic| (*topic, profile))
             })
-            // 4) Merge into topics-to-profile buckets.
+            // 3) Merge into topics-to-profile buckets.
             .flatten()
             .into_iter()
             .into_group_map();
 
-        // Adjust the priority of each topic that we subscribe to based on how many profiles we have
-        // gathered for each topic subscription. The more profiles we have, the lower the priority
-        // should be. Hence, when we gossip, we expect to get back more profiles for the topics
-        // that are most under-subscribed.
+        // 5) Adjust the priority of each topic that we subscribe to based on how many profiles we
+        // have gathered for each topic subscription. The more profiles we have, the lower the
+        // priority should be. Hence, when we gossip, we expect to get back more profiles for the
+        // topics that are most under-subscribed.
         identity
             .subscriptions
             .iter_mut()
             .for_each(|(topic, priority)| {
                 if let Some(topic_profile_set) = topic_map.get(topic) {
+                    // NB: These breakpoint values are relatively arbitrary. Ideally, priority
+                    // would be represented by a greater value set (e.g. 0-100). This would be
+                    // particularly beneficial if there were many subscribed topics as it would
+                    // result in an a fairer priority allocation.
                     let fill_percentage = (topic_profile_set.len() / self.view_size) / 100;
                     if fill_percentage >= 80 {
                         *priority = Priority::Low;
@@ -83,10 +80,19 @@ impl Layer for Vicinity {
                 }
             });
 
-        // Flatten all of the profiles into the output.
-        //        for profiles in topic_map.values().into_iter().clone().into_iter().cloned() {
-        //            output.extend(profiles);
-        //        }
+        // 6) Take the top N profiles (where N = self.view_size) for each subscribed topic and
+        //    collect them into a single vector.
+        let view = topic_map
+            .values()
+            .into_iter()
+            .take(self.view_size)
+            .flatten()
+            .collect::<Vec<&Profile>>()
+            // 7) Clone each profile, and then filter out any duplicates (because a single profile
+            //    may have been mapped to multiple topics previously -- see steps 2 & 4 above).
+            .into_iter()
+            .cloned()
+            .unique(); // 'uniqueness' is based on node ID (see Profile equality function).
     }
 
     fn collect_gossips(
