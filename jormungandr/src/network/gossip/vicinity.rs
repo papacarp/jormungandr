@@ -93,6 +93,8 @@ impl Layer for Vicinity {
             .into_iter()
             .cloned()
             .unique(); // 'uniqueness' is based on node ID (see Profile equality function).
+
+        // TODO: Collect the actual gossips into the output.
     }
 
     fn collect_gossips(
