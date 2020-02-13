@@ -34,7 +34,7 @@ impl Layer for Vicinity {
         &mut self,
         identity: &mut Profile,
         input: &ProfileSet,
-        origin: &Profile,
+        _origin: &Profile,
         output: &mut ProfileSet,
     ) {
         let topic_map: HashMap<Topic, Vec<&Profile>> = input
