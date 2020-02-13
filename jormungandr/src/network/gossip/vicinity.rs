@@ -1,6 +1,7 @@
 use crate::network::gossip::layer::Layer;
 use crate::network::gossip::profile::{Priority, Profile, ProfileSet, Topic};
 use itertools::Itertools;
+use rand::seq::IteratorRandom;
 use std::collections::{HashMap, HashSet};
 
 const DEFAULT_VIEW_SIZE: usize = 20;
@@ -82,19 +83,32 @@ impl Layer for Vicinity {
 
         // 6) Take the top N profiles (where N = self.view_size) for each subscribed topic and
         //    collect them into a single vector.
-        let view = topic_map
+        let trimmed = topic_map
             .values()
             .into_iter()
             .take(self.view_size)
             .flatten()
-            .collect::<Vec<&Profile>>()
             // 7) Clone each profile, and then filter out any duplicates (because a single profile
             //    may have been mapped to multiple topics previously -- see steps 2 & 4 above).
             .into_iter()
             .cloned()
-            .unique(); // 'uniqueness' is based on node ID (see Profile equality function).
+            .unique()
+            .collect::<Vec<&Profile>>(); // 'uniqueness' is based on node ID (see Profile equality function).
 
-        // TODO: Collect the actual gossips into the output.
+        // 7) Now we just need to make sure that we have the amount optimum amount of selected
+        //    profiles (i.e. self.gossip_size). If not, we combine with as many unique randomly
+        //    selected profiles as possible to make up the numbers.
+        let selected: ProfileSet = trimmed.into_iter().cloned().collect();
+        let random: ProfileSet = selected
+            .difference(input)
+            .choose_multiple(&mut rand::thread_rng(), self.gossip_size - selected.len())
+            .into_iter()
+            .cloned()
+            .collect();
+
+        // 8) Finally we update the output by inserting the nodes selected in step 7.
+        output.extend(selected);
+        output.extend(random);
     }
 
     fn collect_gossips(
