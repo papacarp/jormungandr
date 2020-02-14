@@ -2,7 +2,7 @@ use crate::network::gossip::layer::Layer;
 use crate::network::gossip::profile::{Priority, Profile, ProfileSet, Topic};
 use itertools::Itertools;
 use rand::seq::IteratorRandom;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 const DEFAULT_VIEW_SIZE: usize = 20;
 const DEFAULT_GOSSIP_SIZE: usize = 10;
@@ -113,7 +113,7 @@ impl Layer for Vicinity {
 
     fn collect_gossips(
         &self,
-        identity: &mut Profile,
+        _identity: &mut Profile,
         input: &ProfileSet,
         target: &Profile,
         output: &mut ProfileSet,

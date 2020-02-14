@@ -1,7 +1,6 @@
 use crate::network::gossip::layer::Layer;
 use crate::network::gossip::profile::{Profile, ProfileSet};
 use rand::seq::IteratorRandom;
-use std::borrow::BorrowMut;
 
 const DEFAULT_VIEW_SIZE: usize = 20;
 const DEFAULT_GOSSIP_SIZE: usize = 10;
@@ -30,7 +29,7 @@ impl Layer for Cyclon {
     fn accept_gossips(
         &mut self,
         identity: &mut Profile,
-        input: &ProfileSet,
+        _input: &ProfileSet,
         _origin: &Profile,
         output: &mut ProfileSet,
     ) {
