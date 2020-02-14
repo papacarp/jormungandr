@@ -28,8 +28,8 @@ impl Default for Cyclon {
 impl Layer for Cyclon {
     fn accept_gossips(
         &mut self,
-        identity: &mut Profile,
-        _input: &ProfileSet,
+        _identity: &mut Profile,
+        input: &ProfileSet,
         _origin: &Profile,
         output: &mut ProfileSet,
     ) {

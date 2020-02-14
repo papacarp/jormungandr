@@ -48,16 +48,19 @@ impl poldercast::Policy for Policy {
         if let Some(since) = node.logs().quarantined() {
             let duration = since.elapsed().unwrap();
 
-            if duration < self.quarantine_duration {
+            // Apply exponential backoff the quarantine period.
+            let quarantine_duration = self.quarantine_duration * node.record().lifetime_strikes;
+
+            if duration < quarantine_duration {
                 // the node still need to do some quarantine time
                 PolicyReport::None
-            } else if node.logs().last_update().elapsed().unwrap() < self.quarantine_duration {
+            } else if node.logs().last_update().elapsed().unwrap() < quarantine_duration {
                 // the node has been quarantined long enough, check if it has been updated
                 // while being quarantined (i.e. the node is still up and advertising itself
                 // or others are still gossiping about it.)
 
                 // the fact that this `Policy` does clean the records is a policy choice.
-                // one could prefer to keep the record longers for future `check`.
+                // one could prefer to keep the record longer for future `check`.
                 node.record_mut().clean_slate();
                 debug!(logger, "lifting quarantine");
                 PolicyReport::LiftQuarantine

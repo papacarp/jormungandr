@@ -140,7 +140,7 @@ impl P2pTopology {
         gossips: Gossips,
     ) -> impl Future<Item = (), Error = E> {
         self.write().map(move |mut topology| {
-            if topology.nodes().node_count().all_count < DEFAULT_MAX_NODES {
+            if topology.nodes().node_count().available_count < DEFAULT_MAX_NODES {
                 topology.accept_gossips(from.into(), gossips.into())
             }
         })
