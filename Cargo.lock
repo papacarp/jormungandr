@@ -2188,7 +2188,7 @@ dependencies = [
  "network-core",
  "network-grpc",
  "nix 0.15.0",
- "poldercast 0.11.5",
+ "poldercast 0.11.6",
  "rand 0.7.3",
  "rustls",
  "serde",
@@ -3022,13 +3022,12 @@ dependencies = [
 
 [[package]]
 name = "poldercast"
-version = "0.11.5"
-source = "git+https://github.com/michaeljfazio/poldercast.git?rev=ed34342#ed3434255b99c45577530f6cb2fec9e715fbafc4"
+version = "0.11.6"
+source = "git+https://github.com/michaeljfazio/poldercast.git?rev=f6b3986#f6b3986755c87c72a320ea14fe9690b81a333ecb"
 dependencies = [
  "hex 0.4.0",
  "multiaddr",
  "rand 0.7.3",
- "rayon",
  "serde",
  "thiserror",
 ]
