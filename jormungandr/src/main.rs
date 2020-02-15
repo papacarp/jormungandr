@@ -39,6 +39,7 @@ use std::time::Duration;
 pub mod blockcfg;
 pub mod blockchain;
 pub mod client;
+pub mod cluster;
 pub mod diagnostic;
 pub mod explorer;
 pub mod fragment;
